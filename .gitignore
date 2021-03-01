@@ -2,5 +2,5 @@ node_modules
 .cache
 
 clones
-src/gh_pat.js
+src/gh_pat.json
 # dist
