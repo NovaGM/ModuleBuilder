@@ -11,7 +11,15 @@ import { createHash } from 'crypto';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import githubPAT from './gh_pat.js';
+let file;
+let githubPAT;
+try {
+  file = JSON.parse(readFileSync('./gh_pat.json'));
+  githubPAT = file.token;
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+  githubPAT = process.env.GHTOKEN;
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
