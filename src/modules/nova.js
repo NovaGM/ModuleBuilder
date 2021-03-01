@@ -1,1 +1,3 @@
-export default [['KeanuGooseMod/ModuleStore', 'master', '/ConsoleLog']];
+export default [
+  ['KeanuGooseMod/Modules', 'master', '/ConsoleLog'],
+];
