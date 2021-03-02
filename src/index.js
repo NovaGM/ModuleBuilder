@@ -1,5 +1,6 @@
 import ModuleRepos from './modules/index.js';
 import AutoTag from './autoTag.js';
+import WebhookSend from './webhook.js';
 
 import Parcel from 'parcel-bundler';
 import axios from 'axios';
@@ -206,3 +207,5 @@ for (const parentRepo of ModuleRepos) {
 writeFileSync(`${distDir}/modules.json`, JSON.stringify(oldTotalModulesJson));
 
 copyFileSync(`${__dirname.replace('/src', '')}/_headers`, `${distDir}/_headers`);
+
+WebhookSend();
