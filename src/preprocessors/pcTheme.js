@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
+import sass from 'sass';
 
 export default (manifestPath, repo) => {
   const pcManifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
@@ -11,7 +12,7 @@ export default (manifestPath, repo) => {
     description: pcManifest.description,
 
     version: pcManifest.version,
-    authors: [pcManifest.author],
+    authors: [ pcManifest.author ]
   };
 
   rmSync(manifestPath);
@@ -20,7 +21,7 @@ export default (manifestPath, repo) => {
   if (pcManifest.theme.split('.').pop() === 'scss') {
     const cssPath = pcManifest.theme.split('.').slice(0, -1).concat('css').join('.');
 
-    const compiled = sass.renderSync({ file: pcManifest.theme }).css;
+    const compiled = (sass.renderSync({ file: pcManifest.theme })).css;
     writeFileSync(cssPath, compiled);
 
     pcManifest.theme = cssPath;
@@ -42,7 +43,7 @@ export default {
         )
       );
     },
-
+  
     onRemove: async () => {
       style.remove();
     },
