@@ -3,4 +3,7 @@ node_modules
 
 clones
 src/gh_pat.json
-dist
+# dist
+
+devDist
+devTemp
