@@ -1,7 +1,7 @@
 export default [
-  ['KeanuGooseMod/Modules', 'master', '/ConsoleLog'],
-  ['KeanuGooseMod/Modules', 'master', '/comfy-theme'],
-  ['KeanuGooseMod/Modules', 'master', '/settings-experiment'],
-  ['KeanuGooseMod/Modules', 'master', '/FreeNitro'],
-  ['KeanuGooseMod/Modules', 'master', '/usrbg'],
+  ['NovaGM/Modules', 'master', '/ConsoleLog'],
+  ['NovaGM/Modules', 'master', '/comfy-theme'],
+  ['NovaGM/Modules', 'master', '/settings-experiment'],
+  ['NovaGM/Modules', 'master', '/FreeNitro'],
+  ['NovaGM/Modules', 'master', '/usrbg'],
 ];
