@@ -6,4 +6,5 @@ export default [
   ['NovaGM/Modules', 'master', '/settings-experiment'],
   ['NovaGM/Modules', 'master', '/FreeNitro'],
   ['NovaGM/Modules', 'master', '/usrbg'],
+  ['NovaGM/Modules', 'master', '/D.JS-Docs'],
 ];
