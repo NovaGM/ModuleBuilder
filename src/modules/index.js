@@ -2,7 +2,6 @@ import nova from './nova.js';
 
 import pcPlugins from './ports/plugins/pcPlugins.js';
 
-
 export default [
   {
     meta: {
@@ -14,10 +13,10 @@ export default [
   },
   {
     meta: {
-      name: 'Store Core - PC Plugins',
-      description: 'Auto-ported Powercord plugins.'
+      name: 'Nova - PC Plugins',
+      description: 'Powercord plugins ported by NovaGM.',
     },
     filename: 'pcplugins',
-    modules: pcPlugins
-  }
+    modules: pcPlugins,
+  },
 ];
