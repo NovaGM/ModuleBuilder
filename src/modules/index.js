@@ -1,6 +1,7 @@
 import nova from './nova.js';
 
 import pcPlugins from './ports/plugins/pcPlugins.js';
+import pcThemes from './ports/pcThemes.js';
 
 export default [
   {
@@ -11,6 +12,7 @@ export default [
     filename: 'nova',
     modules: nova,
   },
+
   {
     meta: {
       name: 'Nova - PC Plugins',
@@ -19,4 +21,13 @@ export default [
     filename: 'pcplugins',
     modules: pcPlugins,
   },
+
+  {
+    meta: {
+      name: 'Nova - PC Themes',
+      description: 'Powercord themes ported by NovaGM.'
+    },
+    filename: 'pcthemes',
+    modules: pcThemes
+  }
 ];
