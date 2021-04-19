@@ -1,7 +1,7 @@
 import nova from './nova.js';
 
 import pcPlugins from './ports/plugins/pcPlugins.js';
-import pcThemes from './ports/pcThemes.js';
+import pcThemes from './ports/themes/pcThemes.js';
 
 export default [
   {
