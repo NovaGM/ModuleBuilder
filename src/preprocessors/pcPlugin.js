@@ -1,5 +1,4 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
-import sass from 'sass';
 
 export default (manifestPath, repo) => {
   const pcManifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
@@ -20,21 +19,21 @@ export default (manifestPath, repo) => {
 
   let content = readFileSync(pcManifest.main || 'index.js', 'utf8');//.replace(/\\/g, '\\\\').replace(/`/g, '\\`');
 
-  content = content.replace(`module.exports = `, `export default new `);
+  content = content.replace(`module.exports = class`, `export default new class`);
   content = content.replace(/this\.loadStylesheet\(['"`](.*)['"`]\)/g, (_, relative) => {
-    const path = manifestPath.split('/').slice(0, -1).concat('').join('/') + relative;
+    const path = manifestPath.split('/').slice(0, -1).join('/') + relative;
 
     let css;
 
     if (path.split('.').pop() === 'scss') {
-      css = (sass.renderSync({ file: path })).css.toString('utf8');
+      css = (sass.renderSync({ file: path })).css;
     } else {
       css = readFileSync(sync);
     }
 
     css = css.replace(/\\/g, '\\\\').replace(/\`/g, '\`'); // Escape backticks
 
-    return `this.loadStylesheet(\`${css}\`)`;
+    return `this.loadStyleSheet(\`${css}\`)`;
   });
 
   const jsCode = `import powercord from '_powercord/global';\n` + content;
