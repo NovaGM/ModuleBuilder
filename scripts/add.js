@@ -1,30 +1,36 @@
 import { createInterface } from 'readline';
 import { readFileSync, writeFileSync } from 'fs';
 
+import { exec as _exec } from 'child_process';
+import { promisify } from 'util';
+
+const exec = promisify(_exec);
+
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const [ type1, type2, repo ] = process.argv.slice(2);
 
-console.log(type1, type2, repo);
+const [ type1, type2, repo, subpath ] = process.argv.slice(2);
+
+console.log(type1, type2, repo, subpath);
+
+const ask = async (prompt) => {
+  return await new Promise((resp) => {
+    rl.question(prompt, (ans) => {
+      resp(ans);
+    });
+  });
+};
 
 const repeatAsk = async (prompt) => {
   const answers = [];
 
-  const ask = async () => {
-    return await new Promise((resp) => {
-      rl.question(prompt, (ans) => {
-        resp(ans);
-      });
-    });
-  };
-
   let ans;
 
   while (ans !== '') {
-    ans = await ask();
+    ans = await ask(prompt);
     if (ans === '') break;
 
     answers.push(ans);
@@ -57,6 +63,16 @@ switch (type1) {
     
         break;
       }
+
+      case 'bd': {
+        file = `src/modules/ports/themes/bdThemes.js`;
+        js = `  ['${repo}', '', '${subpath}', 'bdTheme', {
+    authors: ${JSON.stringify(authors)},
+    images: ${JSON.stringify(images)}
+  }],`;
+
+        break;
+      }
     }
 
     break;
@@ -72,5 +88,27 @@ contents.splice(-1, 0, '', ...js.split('\n'));
 contents = contents.join('\n');
 
 writeFileSync(file, contents);
+
+const shouldCommit = await new Promise((resp) => {
+  rl.question(`Continue with automated Git (Y/N) > `, (ans) => {
+    resp(ans);
+  });
+}) === 'Y';
+
+if (shouldCommit) {
+  console.log('Building...');
+
+  await exec(`node src/index.js`);
+
+  console.log('Committing...');
+
+  await exec(`git add dist ${file}`);
+
+  await exec(`git commit -m "[(Auto) Add Theme (${type2.toUpperCase()}Theme)] ${repo}"`);
+
+  console.log('Pushing...');
+
+  await exec(`git push`);
+}
 
 rl.close();
