@@ -120,12 +120,7 @@ export default (manifest, content, repo) => {
               .replace('Dnd', 'DND')}',
 
             oninput: (val) => {
-              ${
-                x[1][0] !== '#'
-                  ? `val = parseInt(val.substring(1, 3), 16).toString() + ', ' + parseInt(val.substring(3, 5), 16).toString() + ', ' + parseInt(val.substring(5, 7), 16).toString()`
-                  : ''
-              }
-
+              ${x[2] === 'color' && x[1][0] !== '#' ? `val = parseInt(val.substring(1, 3), 16).toString() + ', ' + parseInt(val.substring(3, 5), 16).toString() + ', ' + parseInt(val.substring(5, 7), 16).toString()` : ''}
               console.log(val);
 
               document.body.style.setProperty('${x[0]}', val);
@@ -167,4 +162,7 @@ export default (manifest, content, repo) => {
     }
   };`;
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 39784f0 ([GenericTheme > Settings] Fix hex color checking when not color type causing bad values oninput)
