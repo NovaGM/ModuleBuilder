@@ -1,13 +1,13 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
 
 export default (themePath, repo) => {
-  const content = readFileSync(themePath);
-  
+  const content = readFileSync(themePath, 'utf8');
+
   const metaReg = /@([^ ]*) (.*)/g;
 
   let manifest = {
     main: 'index.js',
-    tags: ['theme', 'port']
+    tags: ['theme', 'port'],
   };
 
   let match;
@@ -17,7 +17,7 @@ export default (themePath, repo) => {
 
     value = value.trim();
 
-//    console.log(key, value);
+    //    console.log(key, value);
 
     switch (key) {
       case 'name':
@@ -33,11 +33,11 @@ export default (themePath, repo) => {
         break;
 
       case 'author':
-        manifest.authors = [ value ];
+        manifest.authors = [value];
         break;
 
       case 'authorId':
-        manifest.authors = [ value ];
+        manifest.authors = [value];
         break;
     }
   }
@@ -59,7 +59,7 @@ export default {
         )
       );
     },
-  
+
     onRemove: async () => {
       style.remove();
     },
