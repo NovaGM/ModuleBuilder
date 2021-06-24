@@ -122,7 +122,7 @@ export default (manifest, _content, repo) => {
               .replace('Dnd', 'DND')}',
 
             oninput: (val) => {
-              ${x[2] === 'color' && x[1][0] !== '#' ? `val = parseInt(val.substring(1, 3), 16).toString() + ', ' + parseInt(val.substring(3, 5), 16).toString() + ', ' + parseInt(val.substring(5, 7), 16).toString()` : ''}
+              ${''/* x[2] === 'color' && x[1][0] !== '#' ? `val = 'rgb(' + parseInt(val.substring(1, 3), 16).toString() + ', ' + parseInt(val.substring(3, 5), 16).toString() + ', ' + parseInt(val.substring(5, 7), 16).toString() + ')'` : '' */}
 
               document.body.style.setProperty('${x[0]}', val);
             },
