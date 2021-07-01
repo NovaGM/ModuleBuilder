@@ -1,23 +1,23 @@
 import ModuleRepos from './modules/index.js';
+
 import AutoTag from './autoTag.js';
 import WebhookSend from './webhook.js';
 import ImageCDN from './imageCdn.js';
+import authorGen from './authorGen.js';
 
 import Parcel from 'parcel-bundler';
 import axios from 'axios';
 import glob from 'glob';
 
-import { rmSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, existsSync, rmdirSync } from 'fs';
+import { rmSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, existsSync } from 'fs';
 import { createHash } from 'crypto';
 
 import { dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
 
-let file;
-let githubPAT;
+
 try {
-  file = JSON.parse(readFileSync('./gh_pat.json'));
-  githubPAT = file.token;
+  import Env from './env.js';
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
   githubPAT = process.env.GHTOKEN;
@@ -80,7 +80,7 @@ const getGithubInfo = async (repo) => {
 
   const info = (await axios.get(`https://api.github.com/repos/${repo}`, {
     headers: {
-      'Authorization': `token ${githubPAT}`
+      'Authorization': `token ${Env.github}`
     }
   })).data;
 
@@ -221,6 +221,14 @@ for (const parentRepo of ModuleRepos) {
     if (manifest.dependencies) manifestJson.dependencies = manifest.dependencies;
 
     manifestJson.images = await ImageCDN(manifestJson);
+
+    manifestJson.authors = await Promise.all(manifestJson.authors.map(async (x) => {
+      if (x.match(/^[0-9]{17,18}$/)) {
+        return await authorGen(x);
+      }
+
+      return x;
+    }));
 
     moduleJson.modules.push(manifestJson);
 
