@@ -3,13 +3,14 @@ import ModuleRepos from './modules/index.js';
 import AutoTag from './autoTag.js';
 import WebhookSend from './webhook.js';
 import ImageCDN from './imageCdn.js';
-import authorGen from './authorGen.js';
+import AuthorGen from './authorGen.js';
+import SiteGen from './siteGen/index.js';
 
 import Parcel from 'parcel-bundler';
 import axios from 'axios';
 import glob from 'glob';
 
-import { rmSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, existsSync } from 'fs';
+import { rmSync, mkdirSync, readFileSync, writeFileSync, existsSync } from 'fs';
 import { createHash } from 'crypto';
 
 import { dirname, sep } from 'path';
@@ -87,8 +88,6 @@ const getGithubInfo = async (repo) => {
   githubCache[repo] = info;
   return info;
 };
-
-let oldTotalModulesJson = [];
 
 for (const parentRepo of ModuleRepos) {
   let moduleJson = {
@@ -224,7 +223,7 @@ for (const parentRepo of ModuleRepos) {
 
     if (Array.isArray(manifestJson.authors)) manifestJson.authors = await Promise.all(manifestJson.authors.map(async (x) => {
       if (x.match(/^[0-9]{17,18}$/)) {
-        return await authorGen(x);
+        return await AuthorGen(x);
       }
 
       return x;
@@ -244,10 +243,9 @@ for (const parentRepo of ModuleRepos) {
   moduleJson.modules = moduleJson.modules.filter((x) => x !== null);
 
   writeFileSync(repoJsonPath, JSON.stringify(moduleJson));
-
-  oldTotalModulesJson = oldTotalModulesJson.concat(moduleJson.modules);
 }
 
+<<<<<<< HEAD
 writeFileSync(`${distDir}/modules.json`, JSON.stringify(oldTotalModulesJson));
 
 <<<<<<< HEAD
@@ -257,3 +255,6 @@ WebhookSend();
 =======
 copyFileSync(`${__dirname.replace(`${sep}src`, '')}/_headers`, `${distDir}/_headers`);
 >>>>>>> 66b474c (Fix error on Windows (#9))
+=======
+await SiteGen();
+>>>>>>> 736a0e1 ([SiteGen] Initial add (also remove deprecated modules.json))
