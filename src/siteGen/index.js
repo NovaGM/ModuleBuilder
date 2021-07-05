@@ -79,7 +79,7 @@ export default () => {
   let cards = [];
   let metas = [];
 
-  let name = 'GooseMod Store';
+  let name = 'NovaGM Store';
   let description = '';
 
   for (const repo of repos) {
