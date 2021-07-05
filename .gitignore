@@ -1,7 +1,7 @@
 node_modules
 .cache
 clones
-src/env.js
+src/env.json
 dist/*
 devDist
 devTemp
