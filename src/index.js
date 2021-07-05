@@ -16,8 +16,15 @@ import { createHash } from 'crypto';
 import { dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
 
-import Env from './env.js';
-const githubPAT = process.env.GHTOKEN;
+let file;
+let githubPAT;
+try {
+  file = JSON.parse(readFileSync('./env.json'));
+  githubPAT = file.token;
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+  githubPAT = process.env.GHTOKEN;
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -79,7 +86,7 @@ const getGithubInfo = async (repo) => {
   const info = (
     await axios.get(`https://api.github.com/repos/${repo}`, {
       headers: {
-        Authorization: `token ${process.env.githubPAT ? process.env.githubPAT : Env.github}`,
+        Authorization: `token ${githubPAT}`,
       },
     })
   ).data;

@@ -2,5 +2,6 @@ node_modules
 .cache
 clones
 src/env.js
+dist/*
 devDist
 devTemp
