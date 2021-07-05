@@ -16,13 +16,8 @@ import { createHash } from 'crypto';
 import { dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
 
-
-try {
-  import Env from './env.js';
-} catch (error) {
-  if (error.code !== 'ENOENT') throw error;
-  githubPAT = process.env.GHTOKEN;
-}
+import Env from './env.js';
+const githubPAT = process.env.GHTOKEN;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -32,9 +27,6 @@ const distDir = `${__dirname.replace(`${sep}src`, '')}/dist`;
 global.distDir = distDir;
 
 const modulesDir = `${distDir}/module`;
-
-await SiteGen();
-process.exit();
 
 const resetDir = (dir) => {
   rmSync(dir, { recursive: true, force: true });
@@ -53,12 +45,14 @@ if (existsSync(clonesDir)) {
   for (const cloneDir of glob.sync(`${clonesDir}/*/*`)) {
     process.chdir(cloneDir);
 
-    const currentHash = await new Promise((res) => exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())));
+    const currentHash = await new Promise((res) =>
+      exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())),
+    );
 
-    const moduleInRepos = ModuleRepos.map(
-      (x) => x.modules.filter(
-        (y) => y[0] === cloneDir.replace(`${clonesDir}/`, '') && (y[1] === currentHash || !y[1])
-      )
+    const moduleInRepos = ModuleRepos.map((x) =>
+      x.modules.filter(
+        (y) => y[0] === cloneDir.replace(`${clonesDir}/`, '') && (y[1] === currentHash || !y[1]),
+      ),
     ).find((x) => x.length > 0);
 
     if (moduleInRepos) {
@@ -74,7 +68,7 @@ const parcelOptions = {
   watch: false,
   sourceMaps: false,
   outDir: modulesDir,
-  logLevel: 0
+  logLevel: 0,
 };
 
 const githubCache = {};
@@ -82,11 +76,13 @@ const githubCache = {};
 const getGithubInfo = async (repo) => {
   if (githubCache[repo]) return githubCache[repo];
 
-  const info = (await axios.get(`https://api.github.com/repos/${repo}`, {
-    headers: {
-      'Authorization': `token ${Env.github}`
-    }
-  })).data;
+  const info = (
+    await axios.get(`https://api.github.com/repos/${repo}`, {
+      headers: {
+        Authorization: `token ${process.env.githubPAT ? process.env.githubPAT : Env.github}`,
+      },
+    })
+  ).data;
 
   githubCache[repo] = info;
   return info;
@@ -95,15 +91,17 @@ const getGithubInfo = async (repo) => {
 for (const parentRepo of ModuleRepos) {
   let moduleJson = {
     modules: [],
-    meta: parentRepo.meta
+    meta: parentRepo.meta,
   };
 
   const repoJsonPath = `${distDir}/${parentRepo.filename}.json`;
 
-  const currentRepoJson = existsSync(repoJsonPath) ? JSON.parse(readFileSync(repoJsonPath, 'utf8')) : undefined;
+  const currentRepoJson = existsSync(repoJsonPath)
+    ? JSON.parse(readFileSync(repoJsonPath, 'utf8'))
+    : undefined;
 
   for (const repo of parentRepo.modules) {
-    console.time(repo.slice(0, 2).join(' @ ')+`${repo[2] ? ` ${repo[2]}` : ''}`);
+    console.time(repo.slice(0, 2).join(' @ ') + `${repo[2] ? ` ${repo[2]}` : ''}`);
 
     const name = repo[0];
     const cloneDir = `${clonesDir}/${name}`;
@@ -147,9 +145,12 @@ for (const parentRepo of ModuleRepos) {
     if (existsSync(cloneDir)) {
       process.chdir(cloneDir);
 
-      const currentHash = await new Promise((res) => exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())));
+      const currentHash = await new Promise((res) =>
+        exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())),
+      );
 
-      if (currentHash !== repo[1] && repo[1] !== '') rmSync(cloneDir, { recursive: true, force: true });
+      if (currentHash !== repo[1] && repo[1] !== '')
+        rmSync(cloneDir, { recursive: true, force: true });
     }
 
     process.chdir(distDir); // Incase current wd is broken, in which case exec / git crashes
@@ -158,14 +159,23 @@ for (const parentRepo of ModuleRepos) {
 
     process.chdir(cloneDir);
 
-    const lastHash = await new Promise((res) => exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())));
+    const lastHash = await new Promise((res) =>
+      exec(`git rev-parse HEAD`, (err, stdout) => res(stdout.trim())),
+    );
 
     await new Promise((res) => exec(`git checkout ${commitHash}`, res));
 
-    const commitTimestamp = await new Promise((res) => exec(`git log -1 --format="%at" | xargs -I{} date -d @{} +%s`, (err, stdout) => res(stdout.trim())));
+    const commitTimestamp = await new Promise((res) =>
+      exec(`git log -1 --format="%at" | xargs -I{} date -d @{} +%s`, (err, stdout) =>
+        res(stdout.trim()),
+      ),
+    );
 
     if (preprocessor) {
-      const preOut = (await import(`./preprocessors/${preprocessor}.js`)).default(`${cloneDir}${moduleDir}`, repo);
+      const preOut = (await import(`./preprocessors/${preprocessor}.js`)).default(
+        `${cloneDir}${moduleDir}`,
+        repo,
+      );
 
       if (preOut !== undefined) {
         moduleDir = preOut;
@@ -178,9 +188,12 @@ for (const parentRepo of ModuleRepos) {
 
     const outFile = `${manifest.name}.js`;
 
-    const bundler = new Parcel(`${cloneDir}${moduleDir}/${manifest.main}`, Object.assign(parcelOptions, {
-      outFile
-    }));
+    const bundler = new Parcel(
+      `${cloneDir}${moduleDir}/${manifest.main}`,
+      Object.assign(parcelOptions, {
+        outFile,
+      }),
+    );
 
     const bundle = await bundler.bundle();
 
@@ -211,12 +224,12 @@ for (const parentRepo of ModuleRepos) {
 
       github: {
         stars: githubInfo.stargazers_count,
-        repo: repo[0]
+        repo: repo[0],
       },
 
       lastUpdated: parseInt(commitTimestamp),
 
-      ...repo[4]
+      ...repo[4],
     };
 
     if (manifest.images) manifestJson.images = manifest.images;
@@ -224,17 +237,20 @@ for (const parentRepo of ModuleRepos) {
 
     manifestJson.images = await ImageCDN(manifestJson);
 
-    if (Array.isArray(manifestJson.authors)) manifestJson.authors = await Promise.all(manifestJson.authors.map(async (x) => {
-      if (x.match(/^[0-9]{17,18}$/)) {
-        return await AuthorGen(x);
-      }
+    if (Array.isArray(manifestJson.authors))
+      manifestJson.authors = await Promise.all(
+        manifestJson.authors.map(async (x) => {
+          if (x.match(/^[0-9]{17,18}$/)) {
+            return await AuthorGen(x);
+          }
 
-      return x;
-    }));
+          return x;
+        }),
+      );
 
     moduleJson.modules.push(manifestJson);
 
-    console.timeEnd(repo.slice(0, 2).join(' @ ')+`${repo[2] ? ` ${repo[2]}` : ''}`);
+    console.timeEnd(repo.slice(0, 2).join(' @ ') + `${repo[2] ? ` ${repo[2]}` : ''}`);
 
     // console.log(lastHash);
 
@@ -248,16 +264,5 @@ for (const parentRepo of ModuleRepos) {
   writeFileSync(repoJsonPath, JSON.stringify(moduleJson));
 }
 
-<<<<<<< HEAD
-writeFileSync(`${distDir}/modules.json`, JSON.stringify(oldTotalModulesJson));
-
-<<<<<<< HEAD
-copyFileSync(`${__dirname.replace('/src', '')}/_headers`, `${distDir}/_headers`);
-
 WebhookSend();
-=======
-copyFileSync(`${__dirname.replace(`${sep}src`, '')}/_headers`, `${distDir}/_headers`);
->>>>>>> 66b474c (Fix error on Windows (#9))
-=======
 await SiteGen();
->>>>>>> 736a0e1 ([SiteGen] Initial add (also remove deprecated modules.json))
