@@ -1,3 +1,4 @@
+import { performance } from 'perf_hooks';
 import { readFileSync } from 'fs';
 import axios from 'axios';
 
