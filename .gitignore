@@ -2,6 +2,7 @@ node_modules
 .cache
 clones
 src/env.json
+.vercel/
 dist/*
 devDist
 devTemp
