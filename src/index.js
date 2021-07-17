@@ -179,10 +179,9 @@ for (const parentRepo of ModuleRepos) {
     );
 
     if (preprocessor) {
-      const preOut = (await import(`./preprocessors/${preprocessor}.js`)).default(
-        `${cloneDir}${moduleDir}`,
-        repo,
-      );
+      const preOut = await (
+        await import(`./preprocessors/${preprocessor}.js`)
+      ).default(`${cloneDir}${moduleDir}`, repo);
 
       if (preOut !== undefined) {
         moduleDir = preOut;
