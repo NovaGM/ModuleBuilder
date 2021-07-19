@@ -7,4 +7,5 @@ export default [
   ['NovaGM/Modules', 'master', '/FreeNitro'],
   ['NovaGM/Modules', 'master', '/usrbg'],
   ['NovaGM/Modules', 'master', '/D.JS-Docs'],
+  ['TheArmagan/gm-spotify-crack', 'cd300271d99e59440e2cd354a7cd7d472e265f94', '/'],
 ];
